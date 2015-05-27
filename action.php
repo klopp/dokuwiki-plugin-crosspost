@@ -6,6 +6,7 @@ require_once (DOKU_PLUGIN . 'action.php');
 
 class action_plugin_crosspost extends DokuWiki_Action_Plugin
 {
+
     function register(&$controller)
     {
         $controller->register_hook( 'ACTION_ACT_PREPROCESS', 'BEFORE', $this, 
@@ -17,7 +18,7 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         if( $this->getConf( 'cp_add_links' ) )
         {
             $controller->register_hook( 'TPL_CONTENT_DISPLAY', 'BEFORE', $this, 
-                    'add_cp_links', $this->formdata );
+                    'add_cp_links' );
         }
     }
 
@@ -121,7 +122,7 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         
         $namespaces = array();
         search( $namespaces, $conf['datadir'], 'search_namespaces', array() );
-
+        
         $this_ns = '';
         if( $ACT != 'edit' ) return;
         $meta = p_get_metadata( $ID, 'crosspost_to' );
@@ -156,7 +157,7 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             else
                 $x_exact[$x] = 1;
         }
-
+        
         $links = array();
         foreach( $namespaces as $ns )
         {
@@ -195,8 +196,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
                  join( ' ', $links ) . '</div>';
         
         $e->data->insertElement( 2, $input );
-        
-        $this->formdata = $e;
     }
 
     private function _add_link($page)
