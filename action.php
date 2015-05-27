@@ -195,8 +195,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
                  join( ' ', $links ) . '</div>';
         
         $e->data->insertElement( 2, $input );
-        
-        $this->formdata = $e;
     }
 
     private function _add_link($page)
