@@ -1,0 +1,7 @@
+base        crosspost
+name        Crosspost
+desc        Crosspost article to multiple namespaces
+author      Vsevolod Lutovinov 
+email       klopp@yandex.ru
+url         https://github.com/klopp/dw-crosspost/
+date        2015-05-27
