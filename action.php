@@ -21,16 +21,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         }
     }
 
-    private function plog($s)
-    {
-        $f = @fopen( "/home/localhost/snippets.ato.su/log/mnc.log", "a" );
-        if( $f )
-        {
-            fwrite( $f, "$s\n" );
-            fclose( $f );
-        }
-    }
-
     private function _get_all_namespaces()
     {
         global $conf;
@@ -131,9 +121,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         
         $namespaces = array();
         search( $namespaces, $conf['datadir'], 'search_namespaces', array() );
-        //                $this->plog( print_r( $namespaces, true ) );
-        //        return;
-        
 
         $this_ns = '';
         if( $ACT != 'edit' ) return;
@@ -169,9 +156,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             else
                 $x_exact[$x] = 1;
         }
-        //$this->plog( print_r( $x_full, 1 ) );
-        //      $this->plog( print_r( $x_exact, 1 ) );
-        
 
         $links = array();
         foreach( $namespaces as $ns )
@@ -184,7 +168,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
                 $pos = strpos( $ns['id'], $x );
                 if( $pos !== false && $pos == 0 )
                 {
-                    //$this->plog( "x: $x, ns: " . $ns['id'] . " pos: $pos" );
                     $skip = 1;
                     break;
                 }
