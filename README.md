@@ -1,3 +1,3 @@
 # dw-crosspost
 
-Crosspost article to multiple namespaces
+This DokuWiki plugin allow crosspost article to multiple namespaces.
