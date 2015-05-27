@@ -22,14 +22,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         }
     }
 
-    private function _get_all_namespaces()
-    {
-        global $conf;
-        $namespaces = array();
-        search( $namespaces, $conf['datadir'], 'search_namespaces', array() );
-        return $namespaces;
-    }
-
     /*
      * Save page: create and delete crossposts here
      */
