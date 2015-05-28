@@ -112,11 +112,12 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         global $ACT;
         global $conf;
         
+        if( $ACT != 'edit' ) return;
+
         $namespaces = array();
         search( $namespaces, $conf['datadir'], 'search_namespaces', array() );
-        
         $this_ns = '';
-        if( $ACT != 'edit' ) return;
+
         $meta = p_get_metadata( $ID, 'crosspost_to' );
         $meta = preg_split( '/[\s,+]/', $meta, -1, PREG_SPLIT_NO_EMPTY );
         
@@ -165,7 +166,7 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
                     break;
                 }
             }
-            if( $skip ) break;
+            if( $skip ) continue;
             
             $link = '<a ';
             if( in_array( $ns['id'], $meta ) )
