@@ -116,9 +116,13 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
     {
         $title = $entry;
         $header = false;
-        if( $mode == 'title' )
+            if( $mode == 'title' )
         {
             $header = p_get_first_heading( $entry );
+        }
+        elseif( $mode == 'section' )
+        {
+            $header = p_get_first_heading( getNS($entry) );
         }
         elseif( $mode == 'last section:title' )
         {

@@ -10,7 +10,7 @@ $meta['cp_form_titles'] = array('multichoice',
 );
 $meta['cp_link_titles'] = array('multichoice',
                 '_choices' => array('no title','title','full title',
-                                'last section:title' 
+                                'section', 'last section:title' 
                 ) 
 ); 
 
