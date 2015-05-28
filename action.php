@@ -48,13 +48,12 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             if( strpos( $ID, ':' ) === false ) $page .= ':' . $ID;
             else $page .= ':' . $name;
             
-            if( auth_quickaclcheck( $page ) < 1 ) continue;
+            if( auth_quickaclcheck( $page ) < AUTH_CREATE ) continue;
             
             $exists = @file_exists( wikiFN( $page ) );
-            
             if( $ID != $page && !$exists )
             {
-                @saveWikiText( $page, "{{page>$ID}}", 'link from ' . $ID );
+                saveWikiText( $page, "{{page>$ID}}", 'link from ' . $ID );
                 p_set_metadata( $page, 
                         array('crosspost_source' => $ID 
                         ) );
@@ -103,6 +102,58 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         send_redirect( wl( $meta ) . '?do=edit' );
     }
 
+    private function plog($s)
+    {
+        $f = fopen( "/tmp/crosspost.log", "a" );
+        if( $f )
+        {
+            fwrite( $f, "$s\n" );
+            fclose( $f );
+        }
+    }
+
+    private function _getTitle($mode, $entry)
+    {
+        $title = $entry;
+        $header = false;
+        if( $mode == 'title' )
+        {
+            $header = p_get_first_heading( $entry );
+        }
+        elseif( $mode == 'last section:title' )
+        {
+            $header = p_get_first_heading( $entry );
+            if( $header )
+            {
+                $ns = p_get_first_heading( getNS( $entry ) );
+                if( $ns ) $header = $ns . ':' . $header;
+            }
+        }
+        elseif( $mode == 'full title' )
+        {
+            $header = p_get_first_heading( $entry );
+            if( $header )
+            {
+                $allns = explode( ':', $entry );
+                array_pop( $allns );
+                while( count( $allns ) )
+                {
+                    $ns = p_get_first_heading( join( ':', $allns ) );
+                    if( $ns )
+                    {
+                        $header = "$ns:$header";
+                        array_pop( $allns );
+                    }
+                    else
+                    {
+                        $header = array_pop( $allns ) . ":$header";
+                    }
+                }
+            }
+        }
+        return $header ? $header : $title;
+    }
+
     /*
      * Add NS selection to edit page form
      */
@@ -113,11 +164,12 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         global $conf;
         
         if( $ACT != 'edit' ) return;
-
+        
+        $title_mode = $this->getConf( 'cp_form_titles' );
         $namespaces = array();
         search( $namespaces, $conf['datadir'], 'search_namespaces', array() );
         $this_ns = '';
-
+        
         $meta = p_get_metadata( $ID, 'crosspost_to' );
         $meta = preg_split( '/[\s,+]/', $meta, -1, PREG_SPLIT_NO_EMPTY );
         
@@ -131,7 +183,14 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             }
             else
             {
-                $meta[$i] = $ns;
+                if( auth_quickaclcheck( $ns ) >= AUTH_CREATE )
+                {
+                    $meta[$i] = $ns;
+                }
+                else
+                {
+                    array_splice( $meta, $i, 1 );
+                }
             }
         }
         
@@ -168,13 +227,15 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             }
             if( $skip ) continue;
             
+            $header = $this->_getTitle( $title_mode, $ns['id'] );
             $link = '<a ';
+            $class = 'crosspost';
             if( in_array( $ns['id'], $meta ) )
             {
-                $link .= 'style="font-weight:bold;text-decoration:underline" ';
+                $class = 'crosspost_added';
             }
             $link .= 'href="#" onclick="' . 'return cp_link_clicked(this,&quot;' .
-                     $ns['id'] . '&quot)' . '" class="crosspost">' . $ns['id'] .
+                     $ns['id'] . '&quot)' . '" class="' . $class . '">' . $header .
                      '</a>';
             $links[] = $link;
         }
@@ -191,10 +252,12 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         $e->data->insertElement( 2, $input );
     }
 
-    private function _add_link($page)
+    private function _add_link($mode, $page, $title)
     {
-        return '<span class="crosspost"><a href="' . wl( $page ) .
-                 '" class = "wikilink1 crosspost">' . $page . '</a></span>';
+        $link_title = $this->_getTitle( $mode, $page );
+        return '<span class="crosspost"><a href="' . wl( $page ) . '" title="' .
+                 $title . '" ' . '" class = "crosspost_link">' . $link_title .
+                 '</a></span>';
     }
 
     function add_cp_links(&$e, $param)
@@ -202,10 +265,12 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         global $ID;
         
         $cs_source = p_get_metadata( $ID, 'crosspost_source' );
-        
         $cc = p_get_metadata( $cs_source ? $cs_source : $ID, 'crosspost_to' );
         $cc = preg_split( '/[\s,+]/', $cc, -1, PREG_SPLIT_NO_EMPTY );
         if( count( $cc ) < 1 ) return;
+        $title_mode = $this->getConf( 'cp_link_titles' );
+        $title_copy = $this->getLang( 'cp_link_copy' );
+        $title_source = $this->getLang( 'cp_link_source' );
         
         if( !in_array( $ID, $cc ) ) $cc[] = $ID;
         if( $cs_source && !in_array( $cs_source, $cc ) ) $cc[] = $cs_source;
@@ -215,7 +280,8 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         {
             if( $page != $ID )
             {
-                $addlink .= $this->_add_link( $page ) . " ";
+                $addlink .= $this->_add_link( $title_mode, $page, 
+                        $page == $cs_source ? $title_source : $title_copy ) . " ";
             }
         }
         

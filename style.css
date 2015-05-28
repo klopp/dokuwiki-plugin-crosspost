@@ -1,25 +1,42 @@
 div.crosspost {
-  border-bottom: 1px dotted __border__;
-  border-top: 1px dotted __border__;
-  font-size: 80%;
+	border-bottom: 1px dotted __border__;
+	border-top: 1px dotted __border__;
+	font-size: 80%;
 }
 
 div.crosspost_form {
-  font-size: 80%;
-  padding: 4px 0 10px 0;
+	font-size: 80%;
+	padding: 4px 0 10px 0;
 }
 
 a.crosspost {
-  background: transparent url(images/shortcut.gif) 0px 0px no-repeat;
-  padding-left: 8px;
-  margin-right: 4px;
+    background: transparent url(images/cp.gif) 0px 0px no-repeat;
+    padding-left: 8px;
+    margin-right: 4px;
+    text-decoration: none !important;
+    font-weight: normal !important;
 }
- 
-input.crosspost
-{
-  color: #060;
-  background-color: #CFC;
-  padding: 1px 1px 1px 2px;
-  font-family: monospace;
-  font-weight: bold;
+
+a.crosspost_link {
+    background: transparent url(images/cp-link.gif) 0px 0px no-repeat;
+    padding-left: 8px;
+    margin-right: 4px;
+    text-decoration: none !important;
+    font-weight: normal !important;
+}
+
+a.crosspost_added {
+	background: transparent url(images/cp-added.gif) 0px 0px no-repeat;
+	padding-left: 8px;
+	margin-right: 4px;
+	text-decoration: underline !important;
+	font-weight: bold !important;
+}
+
+input.crosspost {
+	color: #060;
+	background-color: #CFC;
+	padding: 1px 1px 1px 2px;
+	font-family: monospace;
+	font-weight: bold;
 }

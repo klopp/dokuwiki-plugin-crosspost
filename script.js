@@ -10,8 +10,7 @@ function cp_link_clicked(a, ns) {
 	for (var i = 0; i < cp_values.length; i++) {
 		if (cp_values[i] == ns) {
 			cp_values.splice(i, 1);
-			a.style.fontWeight = 'normal';
-			a.style.textDecoration = 'none';
+			a.className = 'crosspost';
 			found = true;
 			break;
 		}
@@ -19,8 +18,7 @@ function cp_link_clicked(a, ns) {
 
 	if (!found) {
 		cp_values[cp_values.length] = ns;
-		a.style.fontWeight = 'bold';
-		a.style.textDecoration = 'underline';
+		a.className = 'crosspost_added';
 	}
 	cp_to.value = cp_values.join(',');
 	return false;
