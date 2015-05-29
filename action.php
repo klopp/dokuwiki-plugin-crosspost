@@ -116,13 +116,13 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
     {
         $title = $entry;
         $header = false;
-            if( $mode == 'title' )
+        if( $mode == 'title' )
         {
             $header = p_get_first_heading( $entry );
         }
         elseif( $mode == 'section' )
         {
-            $header = p_get_first_heading( getNS($entry) );
+            $header = p_get_first_heading( getNS( $entry ) );
         }
         elseif( $mode == 'last section:title' )
         {
@@ -156,6 +156,23 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
             }
         }
         return $header ? $header : $title;
+    }
+
+    private function _skip_ns($xns, $ns)
+    {
+        foreach( $xns as $x )
+        {
+            if( $x{0} == '!' )
+            {
+                $pos = strpos( $ns, ltrim( $x, 1 ) );
+                if( $pos !== false && $pos == 0 ) return true;
+            }
+            else
+            {
+                if( $x == $ns ) return true;
+            }
+        }
+        return false;
     }
 
     /*
@@ -203,33 +220,37 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         $xns = preg_split( '/[\s,+]/', $xns, -1, PREG_SPLIT_NO_EMPTY );
         $x_exact = array();
         $x_full = array();
-        foreach( $xns as $x )
-        {
-            if( $x{0} == '!' )
-            {
-                $x = ltrim( $x, '!' );
-                if( !in_array( $x, $x_full ) ) $x_full[] = $x;
-            }
-            else
-                $x_exact[$x] = 1;
-        }
-        
+        /*
+         foreach( $xns as $x )
+         {
+         if( $x{0} == '!' )
+         {
+         $x = ltrim( $x, '!' );
+         if( !in_array( $x, $x_full ) ) $x_full[] = $x;
+         }
+         else
+         $x_exact[$x] = 1;
+         }
+         */
         $links = array();
         foreach( $namespaces as $ns )
         {
             if( $ns['id'] == $this_ns ) continue;
-            if( $x_exact[$ns['id']] ) continue;
-            $skip = false;
-            foreach( $x_full as $x )
-            {
-                $pos = strpos( $ns['id'], $x );
-                if( $pos !== false && $pos == 0 )
-                {
-                    $skip = 1;
-                    break;
-                }
-            }
-            if( $skip ) continue;
+            if( $this->_skip_ns( $xns, $ns['id'] ) ) continue;
+            /*
+             if( $x_exact[$ns['id']] ) continue;
+             $skip = false;
+             foreach( $x_full as $x )
+             {
+             $pos = strpos( $ns['id'], $x );
+             if( $pos !== false && $pos == 0 )
+             {
+             $skip = 1;
+             break;
+             }
+             }
+             if( $skip ) continue;
+             */
             
             $header = $this->_getTitle( $title_mode, $ns['id'] );
             $link = '<a ';
