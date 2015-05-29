@@ -3,5 +3,5 @@ name        Crosspost Plugin
 desc        Crosspost article to multiple namespaces
 author      Vsevolod Lutovinov 
 email       klopp@yandex.ru
-url         https://github.com/klopp/dw-crosspost/
+url         https://github.com/klopp/dokuwiki-plugin-crosspost/
 date        2015-05-28
