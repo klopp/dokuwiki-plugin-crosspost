@@ -222,40 +222,13 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         if( !$this_ns ) $this_ns = getNS( $ID );
         $xns = $this->getConf( 'cp_ns_disabled' );
         $xns = preg_split( '/[\s,+]/', $xns, -1, PREG_SPLIT_NO_EMPTY );
-        $x_exact = array();
-        $x_full = array();
-        /*
-         foreach( $xns as $x )
-         {
-         if( $x{0} == '!' )
-         {
-         $x = ltrim( $x, '!' );
-         if( !in_array( $x, $x_full ) ) $x_full[] = $x;
-         }
-         else
-         $x_exact[$x] = 1;
-         }
-         */
         $links = array();
+        
         foreach( $namespaces as $ns )
         {
             if( $ns['id'] == $this_ns ) continue;
             if( $this->_skip_ns( $xns, $ns['id'] ) ) continue;
-            /*
-             if( $x_exact[$ns['id']] ) continue;
-             $skip = false;
-             foreach( $x_full as $x )
-             {
-             $pos = strpos( $ns['id'], $x );
-             if( $pos !== false && $pos == 0 )
-             {
-             $skip = 1;
-             break;
-             }
-             }
-             if( $skip ) continue;
-             */
-            
+                       
             $header = $this->_getTitle( $title_mode, $ns['id'] );
             $link = '<a ';
             $class = 'crosspost';
