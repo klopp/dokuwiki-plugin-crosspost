@@ -164,7 +164,7 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         {
             if( $x{0} == '!' )
             {
-                $pos = strpos( $ns, ltrim( $x, 1 ) );
+                $pos = strpos( $ns, ltrim( $x, '!' ) );
                 if( $pos !== false && $pos == 0 ) return true;
             }
             else
@@ -185,6 +185,10 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         global $conf;
         
         if( $ACT != 'edit' ) return;
+        
+        $xns = $this->getConf( 'cp_disable_on' );
+        $xns = preg_split( '/[\s,+]/', $xns, -1, PREG_SPLIT_NO_EMPTY );
+        if( $this->_skip_ns( $xns, getNS( $ID ) ) ) return;
         
         $title_mode = $this->getConf( 'cp_form_titles' );
         $namespaces = array();
