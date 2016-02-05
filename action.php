@@ -102,16 +102,6 @@ class action_plugin_crosspost extends DokuWiki_Action_Plugin
         send_redirect( wl( $meta ) . '?do=edit' );
     }
 
-    private function plog($s)
-    {
-        $f = fopen( "/tmp/crosspost.log", "a" );
-        if( $f )
-        {
-            fwrite( $f, "$s\n" );
-            fclose( $f );
-        }
-    }
-
     private function _getTitle($mode, $entry)
     {
         $title = $entry;
